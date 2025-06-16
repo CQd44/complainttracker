@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset = "UTF-8">
+<style>
+	body {
+		margin: 0;
+		display: grid;
+		min-height: 10vh;
+		place-items: center;
+		background-color: lightgray;
+	}
+	div {
+		text-align: center;
+	}
+	input[type="submit"] {
+	display: block;
+	margin: 0 auto;
+	}
+	input[type="text"] {
+	display: block;
+	margin: 0 auto;
+	}
+	
+	input[type="textarea"] {
+	display: block;
+	margin: 0 auto;
+	
+	}
+	textarea {
+  width: 320px;
+  height: 100px;
+	}
+
+	input[type="number"] {
+	display: block;
+	margin: 0 auto;
+	}
+
+	p {
+		text-align: center;
+	}
+
+	.radio1 {
+		margin-left: 33%;
+	}
+
+	.radio2 {
+		margin-left: 5%;
+	}
+
+	.row {
+		display: table;
+		table-layout: fixed; /*Optional*/
+		border-spacing: 10px; /*Optional*/
+	}
+	.column {
+    	display: table-cell;
+		border-spacing: 10%;
+		border: 1px solid;
+		padding: 5px;
+	}
+
+		</style>
+<title>Complaint Tracker</title></head>
+<link rel="icon" type = "image/x-icon" href="https://dhrhealth.com/favicon.ico">
+<body>
+    <h1>Complaint Tracker</h1>
+	<div><img src="https://www.dhrhealth.com/media/gwnhldr2/dhr-logo.png" alt = "DHR Logo" width = "25%" height = "25%"></div>
+    <p>Please enter the details of the complaint, the action taken to address it, and whether or not it was a valid complaint.</p>
+	<p>"Valid" in this instance means the complaint arose from actions taken by staff at the call center.</p>
+	<form method="post" action="/submit">
+        <label>Complaint Details (who, what, when, where, why, etc): <br><textarea name="complaint" required></textarea></label><br>
+		<label>Action taken (who, what, when, where, why, etc):<br> <textarea name="response" required></textarea></label><br>
+        <p>Was it a valid complaint?</p>
+		<input class = "radio1" type="radio" id="true" name="validity" value="True" required>
+		<label class = "radio2" for="True">Yes</label><br>
+		<input class = "radio1" type="radio" id="false" name="validity" value="False" required>
+		<label class = "radio2" for="False">No</label><br>
+		<input class = "radio1" type="radio" id="tbd" name="validity" value="Unknown" required>
+		<label class = "radio2" for="TBD">To Be Determined</label><br><br>
+        <input type="submit" value="Submit">
+    </form>
+	<div class = "row">
+
+		<div class = "column">
+	<h1>View a Complaint</h1>
+	<form method = "get" action = "/view">
+		<label>Enter complaint ID: <input type = "number" name = "id" required></label><br>
+		<input type = "submit" value="View Complaint">
+	</form>
+	</div>
+	<div class = "column">
+	<h1>View Complaint Log</h1>
+	<form method = "get" action = "/viewlog">
+		<input type = "submit" value="View Complaint Log"> </form>
+	</div>
+	</div>
+</body>
+</html>
+
+
