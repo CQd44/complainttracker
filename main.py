@@ -174,7 +174,7 @@ async def update_both(ticket: TicketUpdate):
 async def thank_you(request: Request, id: int):
     return templates.TemplateResponse("thank_you.html", {"request": request, "id" : id})
 
-#Page to let users check on their ticket if they search by ID
+#Page to let users check on complaint if they search by ID
 @app.get("/view", response_class = HTMLResponse)
 async def view_ticket(request: Request, id: int):
     con = psycopg2.connect(f'dbname = {CONFIG['credentials']['dbname']} user = {CONFIG['credentials']['username']} password = {CONFIG['credentials']['password']}')
