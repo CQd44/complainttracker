@@ -101,9 +101,7 @@ async def update_complaint(request: Request, update_complaint: str = Form(...), 
     DATA = (id, )
     cur.execute(SQL, DATA)  
     current_complaint: str = cur.fetchone()[0]  # type: ignore
-    print(current_complaint)
     current_complaint = current_complaint + f'\n\nUPDATED {strftime("%Y-%m-%d %H:%M:%S", gmtime())}\n\n{update_complaint}'
-    print(current_complaint)
     SQL = "UPDATE complaints SET complaint = %s WHERE id = %s;"
     DATA = (current_complaint, id)
     cur.execute(SQL, DATA)
@@ -155,8 +153,7 @@ async def update_both(ticket: TicketUpdate):
     DATA = (ticket.ticket_id, )
     cur.execute(SQL, DATA)  
     current_response: str = cur.fetchone()[0]  # type: ignore
-    print(current_response)
-
+   
     current_response = current_response + f"""      
     UPDATED {strftime("%Y-%m-%d", gmtime())}:
     {ticket.response}"""
@@ -167,6 +164,18 @@ async def update_both(ticket: TicketUpdate):
     cur.close()
     con.commit()
     return HTMLResponse(content=f"<h1>Complaint updated.</h1><a href = '/view?id={ticket.ticket_id}'>Go back</a>")
+
+@app.post("/update_validity")
+async def update_validity(request: Request, validity: bool = Form(...), id: int = Form(...)):
+    con = psycopg2.connect(f'dbname = {CONFIG['credentials']['dbname']} user = {CONFIG['credentials']['username']} password = {CONFIG['credentials']['password']}')
+    cur = con.cursor()
+    SQL = "UPDATE complaints SET validity = %s WHERE id = %s;"
+    DATA = (validity, id)
+    cur.execute(SQL, DATA)
+    cur.close()
+    con.commit()
+    return HTMLResponse(content=f"<h1>Complaint updated.</h1><a href = '/view?id={id}'>Go back</a>")
+
 
 # Thank-you page
 @app.get("/thank-you", response_class=HTMLResponse)
