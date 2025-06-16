@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head><title>Complaints Log</title></head>
+<link rel="icon" type = "image/x-icon" href="https://dhrhealth.com/favicon.ico">
+<body>
+<style>
+	h1 {
+	text-align: center;
+	margin-top: 5%;
+	background-color: lightgray;
+	}
+	
+	body {
+		margin-left: 0;
+		display: grid;
+		min-height: 10vh;
+		place-items: justify left;
+		background-color: lightgray;
+        text-align: center;
+	}
+
+	
+	.active {
+	text-align: center;
+	}
+	
+	div {
+	text-align: center;
+	}
+
+    #dataTable {
+        padding-top: 50px;
+        padding-left: 25%;
+        padding-right: 25%;
+        table-layout: fixed;
+        width: auto;
+    }
+
+    #dataTable th, #dataTable td {
+        text-align: left;
+        padding: 8px;
+        width: auto;
+        border: 1px solid black;
+    }
+
+    #dataTable thead th:nth-child(1) {
+        width: 50px;
+        text-transform: uppercase;
+    }
+
+    #dataTable thead th:nth-child(2),
+    #dataTable thead th:nth-child(3) {
+        text-transform: capitalize;
+    }
+
+    #logo {
+	padding-top: 50px;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+		</style>
+<h1>Complaints Log</h1>
+	<table id="dataTable">
+        <thead id="tableHeader"></thead>
+        <tbody id="tableBody"></tbody>
+    </table>
+
+<script>
+    fetch('http://10.200.23.11:8300/fetch')
+        .then(response => {            
+            return response.json();
+        })        
+        .then(data => {
+            if (data.length === 0) {
+                document.getElementById('tableHeader').innerHTML = '<tr><td colspan="100">No complaints! :)</td></tr>';
+                    return;
+            }
+            const headers = Object.keys(data[0]);
+            const headerRow = headers.map(header => `<th>${header}</th>`).join('');
+            document.getElementById('tableHeader').innerHTML = `<tr>${headerRow}</tr>`;
+            const rows = data.map(item => {
+                const cells = headers.map(header => `<td>${item[header]}</td>`).join('');
+                return `<tr>${cells}</tr>`;
+            }).join('');
+            document.getElementById('tableBody').innerHTML = rows;
+        })
+        .catch(error => {
+            console.error('Error fetching data: ', error);
+            document.getElementById(tableBody).innerHTML = '<tr><td colspan = "100"> Error loading data</td></tr>';
+        })
+</script>
+	<h1>Download Complaint Log</h1>
+	<p>Download is in CSV format. Certain cells may need to be formatted post-download.</p>
+	<form method = "get" action = "/download">
+		<input type = "submit" value="Download">
+	</form>
+<div><br><br><a href="/" class="active">Go back</a></div>
+<div><img id="logo" src="https://www.dhrhealth.com/media/gwnhldr2/dhr-logo.png" alt = "DHR Logo" height=auto width="25%"></div>
+</body>
+</html>
