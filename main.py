@@ -21,14 +21,13 @@ import csv
 from time import gmtime, strftime
 from pydantic import BaseModel
 
-
 CONFIG = toml.load("./config.toml") #load variables from toml file
 app = FastAPI()
 templates = Jinja2Templates(directory="templates") #loads HTML files from this directory
 SERVER: str = CONFIG['comms']['server']
 PORT: int = CONFIG['comms']['port']
 FROM: str = CONFIG['comms']['from']
-TO: list[str] = CONFIG['comms']['emails'] 
+TO: list[str] = CONFIG['comms']['emails'] #list of emails to send responses to
 
 class TicketUpdate(BaseModel):
     ticket_id: str | int
@@ -80,6 +79,8 @@ async def submit_form(request: Request, complaint: str = Form(...), response: st
     SQL = "INSERT INTO complaints (complaint, response, validity) VALUES (%s, %s, %s);"
     if validity == 'Unknown':
         validity_2 = None
+    else:
+        validity_2 = validity
     DATA = (complaint.strip(), response.strip(), validity_2) # type: ignore
     cur.execute(SQL, DATA)  
     cur.execute("SELECT id FROM complaints ORDER BY id DESC LIMIT 1")
@@ -110,7 +111,6 @@ async def update_complaint(request: Request, update_complaint: str = Form(...), 
     con.commit()
     return HTMLResponse(content=f"<h1>Complaint updated.</h1><a href = '/view?id={id}'>Go back</a>")
 
-
 # Update Action Taken
 @app.post("/update_response")
 async def update_response(request: Request, update_response: str = Form(...), id: int = Form(...)):
@@ -129,7 +129,6 @@ async def update_response(request: Request, update_response: str = Form(...), id
     cur.close()
     con.commit()
     return HTMLResponse(content="<h1>Action taken updated.</h1><a href = '/'>Go back</a>")
-
 
 # Update Both Complaint and Action Taken
 @app.post("/update_both")
@@ -174,7 +173,7 @@ async def update_both(ticket: TicketUpdate):
 async def thank_you(request: Request, id: int):
     return templates.TemplateResponse("thank_you.html", {"request": request, "id" : id})
 
-#Page to let users check on complaint if they search by ID
+#Page to let users check on their ticket if they search by ID
 @app.get("/view", response_class = HTMLResponse)
 async def view_ticket(request: Request, id: int):
     con = psycopg2.connect(f'dbname = {CONFIG['credentials']['dbname']} user = {CONFIG['credentials']['username']} password = {CONFIG['credentials']['password']}')
@@ -182,7 +181,6 @@ async def view_ticket(request: Request, id: int):
     SQL = 'SELECT * FROM complaints WHERE id = (%s);'
     DATA = id
     cur.execute(SQL, (DATA,))
-    
     result = cur.fetchone()
     cur.close()
 
@@ -227,7 +225,8 @@ async def getdb():
     result_list = []
 
     for i in range(len(results)):
-        result_dict[i + 1] = {columns[0] : results[i][0], columns[-2] : str(results[i][1]), columns[-1] : results[i][2], columns[1] : results[i][3], columns[2] : str(results[i][-1])}
+        j = 0
+        result_dict[i + 1] = {columns[j] : results[i][0], columns[-2] : str(results[i][1]), columns[-1] : results[i][2], columns[1] : results[i][3], columns[2] : str(results[i][-1])}
 
     for i in range(len(results)):
         result_list.append(result_dict[i+1])
