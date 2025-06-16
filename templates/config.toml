@@ -1,0 +1,24 @@
+[credentials]
+host = '10.200.23.11'
+dbname = 'responses'
+username = 'postgres'
+password = 'postgres'
+
+[comms]
+server = 'mail.dhr-rgv.com'
+port = 25
+from = 'CallCenterSupportSubmission@dhr-rgv.com'
+emails = ['william.youngiv@dhr-rgv.com',
+          'b.serna@dhr-rgv.com',
+          'bianc.garcia@dhr-rgv.com',
+          'd.colin@dhr-rgv.com',
+          'de.carrion@dhr-rgv.com',
+          'des.rodriguez@dhr-rgv.com',
+          'e.gaona@dhr-rgv.com',
+          'jo.molina@dhr-rgv.com',
+          'juan.recio@dhr-rgv.com',
+          'l.muniz@dhr-rgv.com',
+          'm.estrada@dhr-rgv.com',
+          'r.tanguma@dhr-rgv.com',
+          'ver.flores@dhr-rgv.com'
+          ]
