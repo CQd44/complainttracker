@@ -28,7 +28,7 @@ templates = Jinja2Templates(directory="templates") #loads HTML files from this d
 SERVER: str = CONFIG['comms']['server']
 PORT: int = CONFIG['comms']['port']
 FROM: str = CONFIG['comms']['from']
-TO: list[str] = CONFIG['comms']['emails'] #list of emails to send responses to. currently unused.
+TO: list[str] = CONFIG['comms']['emails'] 
 
 class TicketUpdate(BaseModel):
     ticket_id: str | int
@@ -133,9 +133,7 @@ async def update_response(request: Request, update_response: str = Form(...), id
 
 # Update Both Complaint and Action Taken
 @app.post("/update_both")
-async def update_both(ticket: TicketUpdate):
- 
-    
+async def update_both(ticket: TicketUpdate):    
     if ticket.complaint == "" or ticket.complaint == None: #catches if nothing was entered
         return HTMLResponse(content="<h1>No information entered to update complaint.</h1><a href = '/'>Go back</a>")
     if ticket.response == "" or ticket.response == None: #catches if nothing was entered
@@ -171,7 +169,6 @@ async def update_both(ticket: TicketUpdate):
     con.commit()
     return HTMLResponse(content=f"<h1>Complaint updated.</h1><a href = '/view?id={ticket.ticket_id}'>Go back</a>")
 
-
 # Thank-you page
 @app.get("/thank-you", response_class=HTMLResponse)
 async def thank_you(request: Request, id: int):
@@ -188,8 +185,6 @@ async def view_ticket(request: Request, id: int):
     
     result = cur.fetchone()
     cur.close()
-
-    print(result)
 
     if result:
         ticket_data = {
@@ -232,15 +227,12 @@ async def getdb():
     result_list = []
 
     for i in range(len(results)):
-        j = 0
-        result_dict[i + 1] = {columns[j] : results[i][0], columns[-2] : str(results[i][1]), columns[-1] : results[i][2], columns[1] : results[i][3], columns[2] : str(results[i][-1])}
+        result_dict[i + 1] = {columns[0] : results[i][0], columns[-2] : str(results[i][1]), columns[-1] : results[i][2], columns[1] : results[i][3], columns[2] : str(results[i][-1])}
 
     for i in range(len(results)):
         result_list.append(result_dict[i+1])
 
     return JSONResponse(content=result_list, status_code=200)
-
-
 
 @app.get("/download", response_class=HTMLResponse)
 async def download_db(request: Request):
