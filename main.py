@@ -18,7 +18,7 @@ import psycopg2
 import smtplib
 import toml
 import csv
-from time import gmtime, strftime
+from time import localtime, strftime
 from pydantic import BaseModel
 
 CONFIG = toml.load("./config.toml") #load variables from toml file
@@ -73,9 +73,14 @@ async def get_form(request: Request):
 
 # Handle form submission
 @app.post("/submit")
-async def submit_form(request: Request, complaint: str = Form(...), response: str = Form(...), validity: bool | str | None = Form(...)):
+async def submit_form(request: Request, agent_name: str = Form(...), patient_name: str = Form(...), patient_dob: str = Form(...), patient_phone: str = Form(...), complaint: str = Form(...), response: str = Form(...), validity: bool | str | None = Form(...)):
     con = psycopg2.connect(f'dbname = {CONFIG['credentials']['dbname']} user = {CONFIG['credentials']['username']} password = {CONFIG['credentials']['password']}')
     cur = con.cursor()
+    complaint = f'''Agent Name: {agent_name}
+    Patient name: {patient_name}
+    Patient Date of Birth: {patient_dob}
+    Patient Phone Number: {patient_phone}
+    Complaint: {complaint}'''
     SQL = "INSERT INTO complaints (complaint, response, validity) VALUES (%s, %s, %s);"
     if validity == 'Unknown':
         validity_2 = None
@@ -101,7 +106,7 @@ async def update_complaint(request: Request, update_complaint: str = Form(...), 
     DATA = (id, )
     cur.execute(SQL, DATA)  
     current_complaint: str = cur.fetchone()[0]  # type: ignore
-    current_complaint = current_complaint + f'\n\nUPDATED {strftime("%Y-%m-%d %H:%M:%S", gmtime())}\n\n{update_complaint}'
+    current_complaint = current_complaint + f'\n\nUPDATED {strftime("%Y-%m-%d %H:%M:%S", localtime())}\n\n{update_complaint}'
     SQL = "UPDATE complaints SET complaint = %s WHERE id = %s;"
     DATA = (current_complaint, id)
     cur.execute(SQL, DATA)
@@ -120,8 +125,8 @@ async def update_response(request: Request, update_response: str = Form(...), id
     DATA = (id, )
     cur.execute(SQL, DATA)  
     current_response: str = cur.fetchone()[0]  # type: ignore
-    current_response = current_response + f'\n\nUPDATED {strftime("%Y-%m-%d %H:%M:%S", gmtime())}\n\n{update_response}'
-    SQL = "UPDATE complaints SET complaint = %s WHERE id = %s;"
+    current_response = current_response + f'\n\nUPDATED {strftime("%Y-%m-%d %H:%M:%S", localtime())}\n\n{update_response}'
+    SQL = "UPDATE complaints SET response = %s WHERE id = %s;"
     DATA = (current_response, id)
     cur.execute(SQL, DATA)
     cur.close()
@@ -143,7 +148,7 @@ async def update_both(ticket: TicketUpdate):
     current_complaint: str = cur.fetchone()[0]  # type: ignore
     
     current_complaint = current_complaint + f"""
-    UPDATED {strftime("%Y-%m-%d", gmtime())}:
+    UPDATED {strftime("%Y-%m-%d", localtime())}:
     {ticket.complaint}"""
     
     SQL = "UPDATE complaints SET complaint = %s WHERE id = %s;"
@@ -155,7 +160,7 @@ async def update_both(ticket: TicketUpdate):
     current_response: str = cur.fetchone()[0]  # type: ignore
    
     current_response = current_response + f"""      
-    UPDATED {strftime("%Y-%m-%d", gmtime())}:
+    UPDATED {strftime("%Y-%m-%d", localtime())}:
     {ticket.response}"""
     
     SQL = "UPDATE complaints SET response = %s WHERE id = %s;"
@@ -165,6 +170,7 @@ async def update_both(ticket: TicketUpdate):
     con.commit()
     return HTMLResponse(content=f"<h1>Complaint updated.</h1><a href = '/view?id={ticket.ticket_id}'>Go back</a>")
 
+#Update Validity of Complaint
 @app.post("/update_validity")
 async def update_validity(request: Request, validity: bool = Form(...), id: int = Form(...)):
     con = psycopg2.connect(f'dbname = {CONFIG['credentials']['dbname']} user = {CONFIG['credentials']['username']} password = {CONFIG['credentials']['password']}')
@@ -175,7 +181,6 @@ async def update_validity(request: Request, validity: bool = Form(...), id: int 
     cur.close()
     con.commit()
     return HTMLResponse(content=f"<h1>Complaint updated.</h1><a href = '/view?id={id}'>Go back</a>")
-
 
 # Thank-you page
 @app.get("/thank-you", response_class=HTMLResponse)

@@ -23,7 +23,6 @@
 
 			h1 {
 				text-align: center;
-				margin-top: 5%;
 				background-color: lightgray;
 			}
 			
@@ -97,7 +96,7 @@
 		<h1>Selected Complaint's Details</h1>
 			{% if ticket_data %}
 				<p>This page gives you the ability to update information about the complaint.
-					<br>All updates will be appended and preceded by the word "UPDATE" along with a timestamp. Please include your name for tracking and auditing purposes.
+					<br>All updates will be appended and preceded by the word "UPDATE" along with a timestamp.<br>Please include your name for tracking and auditing purposes.
 				</p>
 				<p><strong>ID:</strong> {{ticket_data.id}}</p>		
 				<p><strong>Date and time entered:</strong> {{ticket_data.entrydate}}</p>
@@ -108,7 +107,7 @@
 				{% endif %}
 				<form method="post" action="/update_validity">
 					<input type="hidden" name="id" value="{{ticket_data.id}}">
-					<p>Update Validity of Complaint: (DO NOT USE YET)</p>
+					<p><strong>Update Validity of Complaint:</strong></p>
 					<input class = "radio1" type="radio" id="true" name="validity" value="True" required>
 							<label class = "radio2" for="True">Complaint was valid</label><br>
 							<input class = "radio1" type="radio" id="false" name="validity" value="False" required>

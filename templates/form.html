@@ -66,9 +66,13 @@
 <body>
     <h1>Complaint Tracker</h1>
 	<div><img src="https://www.dhrhealth.com/media/gwnhldr2/dhr-logo.png" alt = "DHR Logo" width = "25%" height = "25%"></div>
-    <p>Please enter the details of the complaint, the action taken to address it, and whether or not it was a valid complaint. Please include your name.</p>
+    <p>Please enter the details of the complaint, the action taken to address it, and whether or not it was a valid complaint. Please include YOUR name.</p>
 	<p>"Valid" in this instance means the complaint arose from actions taken by staff at the call center.</p>
 	<form method="post" action="/submit">
+		<label>Your Name: <input type="text" name="agent_name" required></label><br>
+		<label>Patient Name: <input type="text" name="patient_name"></label><br>
+		<label>Patient Date of Birth: <input type="text" name="patient_dob" required></label><br>
+		<label>Patient Phone Number: <input type="text" name="patient_phone"></label><br>
         <label>Complaint Details (who, what, when, where, why, etc): <br><textarea name="complaint" required></textarea></label><br>
 		<label>Action taken (who, what, when, where, why, etc):<br> <textarea name="response" required></textarea></label><br>
         <p>Was it a valid complaint?</p>
