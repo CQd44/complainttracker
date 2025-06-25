@@ -45,13 +45,15 @@ Call Center Response:  {response}
 
 Complaint ID: {new_id}
 """
-
-    with smtplib.SMTP(SERVER, PORT, timeout = 20) as server:
-        server.ehlo()
-        server.sendmail(FROM, TO, msg_text)
-        server.quit()
-        print("Email sent!")
-
+    try:
+        with smtplib.SMTP(SERVER, PORT, timeout = 20) as server:
+            server.ehlo()
+            server.sendmail(FROM, TO, msg_text)
+            server.quit()
+            print("Email sent!")
+    except Exception as e:
+        print(e)
+        
 # Set up postgresql database
 def init_db():
     con = psycopg2.connect(f'dbname = {CONFIG['credentials']['dbname']} user = {CONFIG['credentials']['username']} password = {CONFIG['credentials']['password']}')
