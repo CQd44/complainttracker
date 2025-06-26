@@ -20,14 +20,19 @@ import toml
 import csv
 from time import localtime, strftime
 from pydantic import BaseModel
+from fastapi.staticfiles import StaticFiles
+
 
 CONFIG = toml.load("./config.toml") #load variables from toml file
-app = FastAPI()
-templates = Jinja2Templates(directory="templates") #loads HTML files from this directory
 SERVER: str = CONFIG['comms']['server']
 PORT: int = CONFIG['comms']['port']
 FROM: str = CONFIG['comms']['from']
 TO: list[str] = CONFIG['comms']['emails'] #list of emails to send responses to
+
+app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates") #loads HTML files from this directory
+
 
 class TicketUpdate(BaseModel):
     ticket_id: str | int
